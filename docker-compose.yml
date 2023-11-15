@@ -1,51 +1,8 @@
 version: '3.9'
 
-x-common-variables: &common-variables
-  environment:
-    SECRET_KEY: wwcFA#F8%e32DcotGP$$OjE#DEvJqv^rc^9FXTa4yEzAP9BO4#cOvnOp^oglP&t
-    JWT_SECRET_KEY: mKO5PZ1zhA0OXXQzrlRaxh8ZIE28vU77
-    ENV: production
-    DEBUG: True
-
-    # skills-guide_telegram
-    BOT_API_KEY: "6948436561:AAF8DoQh249m1KQFc52NUXgaQ-ThLfKv4C4"
-    NEW_VACANCIES_CRON_TRIGGER: interval
-    NEW_VACANCIES_CRON_PERIOD: 60
-
-    # db driver
-    DB_DRIVER: postgresql
-
-    # POSTGRES
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: Termokit2021
-    POSTGRES_PORT: 5432
-    POSTGRES_HOST: pg_db
-
-    # POSTGRES DB
-    POSTGRES_DATABASE_TG: skills_guide_telegram_bd
-    POSTGRES_DATABASE_PARSER: skills_guide_parser_bd
-    POSTGRES_DATABASE_SITE: skills_guide_site_bd
-
-    # POSTGRES MULTIDB
-    POSTGRES_MULTIBLE_DATABASES: skills_guide_telegram_bd, skills_guide_parser_bd, skills_guide_site_bd
-
-    # service addresses
-    SERVER_PARSE: http://parser:5000
-    SERVER_GPT: http://gpt:7000
-
-    # GPT
-    MaxLenLetter: 300
-    NumberQuestions: 3
-    MaxNumberSkills: 5
-    ApiKeyYndx: AQVN0uhHwFvbWfqnF2fnEmIj4C8ndmS5q0_ogdW4
-    FolderIDYndx: b1gg7s98ajrgid8cbnin
-    TemperatureYndx: 0.6
-
-
 services:
 
   db:
-    <<: *common-variables
     env_file:
       - .env
     container_name: pg_db
@@ -61,14 +18,10 @@ services:
       - .env
     container_name: pgadmin
     image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: test@test.com
-      PGADMIN_DEFAULT_PASSWORD: test123!
     ports:
       - "16543:80"
 
   gpt:
-    <<: *common-variables
     env_file:
       - .env
     container_name: gpt
@@ -78,7 +31,6 @@ services:
       - "7000:7000"
 
   parser:
-    <<: *common-variables
     env_file:
       - .env
     container_name: parser
@@ -90,7 +42,6 @@ services:
       - db
 
   telegram:
-    <<: *common-variables
     env_file:
       - .env
     container_name: telegram
@@ -102,13 +53,12 @@ services:
       - parser
 
   site:
-    <<: *common-variables
     env_file:
       - .env
     container_name: site
     image: meacronics/skills_guide_site:latest
     restart: always
     ports:
-      - "8000:8000"
+      - "80:8000"
     depends_on:
       - parser
