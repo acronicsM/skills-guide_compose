@@ -32,24 +32,13 @@ nano .env
 docker compose up
 ```
 
-6. sdsd
-7. 
-4. 
-5. 
-6. Перейдите в директорию проекта:
 
-```bash
-cd skills-guide_compose
-```
+## 💡 Инструкции к настройке и использованию сервисов проекта
 
-4. Build the Docker image:
+- [PostgreSQL](https://www.postgresql.org/docs/)
+- [pgAdmin](https://www.pgadmin.org/docs/pgadmin4/7.8/getting_started.html)
+- [GPT](https://github.com/acronicsM/skills-guide_gpt)
+- [Parser](https://github.com/acronicsM/ParserHH)
+- [Telegram](https://github.com/acronicsM/skills-guide_telegram)
+- [Site](https://github.com/acronicsM/skills-guide_site)
 
-```bash
-docker compose build
-```
-
-5. Start the service using Docker Compose:
-
-```bash
-docker compose up
-```
