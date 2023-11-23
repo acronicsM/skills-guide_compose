@@ -12,59 +12,46 @@ services:
       - ./init-multi-postgres-databases.sh:/docker-entrypoint-initdb.d/init-multi-postgres-databases.sh
     expose:
       - 5432
-#    ports:
-#      - "5432:5432"
-
 
   pgadmin:
     env_file:
       - .env
     container_name: pgadmin
     image: dpage/pgadmin4
-#    ports:
-#      - "16543:80"
 
-#  gpt:
-#    env_file:
-#      - .env
-#    container_name: gpt
-#    image: meacronics/skills_guide_gpt:latest
-#    restart: always
-#    expose:
-#      - 7000
-##    ports:
-##      - "7000:7000"
+  gpt:
+    env_file:
+      - .env
+    container_name: gpt
+    image: meacronics/skills_guide_gpt:latest
+    restart: always
+    expose:
+      - 7000
 
   parser:
     env_file:
       - .env
     container_name: parser
-    command: gunicorn --bind 0.0.0.0:5000 app:app
-    build:
-      context: C:\Users\1C\PycharmProjects\ParserHH
-      dockerfile: C:\Users\1C\PycharmProjects\ParserHH\Dockerfile
-    #    image: meacronics/skills_guide_parser:latest
+    command: bash -c "flask create_db && gunicorn --bind 0.0.0.0:5000 app:app"
+    image: meacronics/skills_guide_parser:latest
     restart: always
     expose:
       - 5000
-#    ports:
-#      - "5000:5000"
     depends_on:
       - db
-#
-#  telegram:
-#    env_file:
-#      - .env
-#    container_name: telegram
-#    image: meacronics/skills_guide_telegram:latest
-#    restart: always
-#    expose:
-#      - 6000
-##    ports:
-##      - "6000:6000"
-#    depends_on:
-#      - parser
-#
+
+
+  telegram:
+    env_file:
+      - .env
+    container_name: telegram
+    image: meacronics/skills_guide_telegram:latest
+    restart: always
+    expose:
+      - 6000
+    depends_on:
+      - parser
+
   site:
     env_file:
       - .env
@@ -73,19 +60,17 @@ services:
     restart: always
     expose:
       - 8000
-#    ports:
-#      - "80:8000"
     depends_on:
       - parser
+
 
   nginx:
     build: ./nginx
     ports:
       - 80:80
-#    volumes:
-#      - ./static:/home/web/default/static
     depends_on:
       - db
       - pgadmin
       - parser
       - site
+
