@@ -12,12 +12,16 @@ services:
       - ./init-multi-postgres-databases.sh:/docker-entrypoint-initdb.d/init-multi-postgres-databases.sh
     expose:
       - 5432
+#    networks:
+#      - myapp
 
   pgadmin:
     env_file:
       - .env
     container_name: pgadmin
     image: dpage/pgadmin4
+#    networks:
+#      - myapp
 
   gpt:
     env_file:
@@ -27,6 +31,8 @@ services:
     restart: always
     expose:
       - 7000
+#    networks:
+#      - myapp
 
   parser:
     env_file:
@@ -39,7 +45,8 @@ services:
       - 5000
     depends_on:
       - db
-
+#    networks:
+#      - myapp
 
   telegram:
     env_file:
@@ -51,6 +58,8 @@ services:
       - 6000
     depends_on:
       - parser
+#    networks:
+#      - myapp
 
   site:
     env_file:
@@ -62,15 +71,40 @@ services:
       - 8000
     depends_on:
       - parser
-
+#    networks:
+#      - myapp
 
   nginx:
-    build: ./nginx
+    image: nginx:latest
+    restart: always
     ports:
       - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d/:ro
+      - ./certbot/www:/var/www/certbot/:ro
     depends_on:
       - db
       - pgadmin
       - parser
       - site
+#    networks:
+#      - myapp
 
+  certbot:
+    image: certbot/certbot:latest
+    depends_on:
+      - nginx
+    container_name: certbot
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+    command: certonly --webroot --webroot-path=/var/www/cert --email klozespb@gmail.com --
+#    networks:
+#      - myapp
+#volumes:
+#  etc-letsencrypt:
+#  default_site:
+#
+#networks:
+#  myapp:
+#    driver: bridge
